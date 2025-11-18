@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 import re
 import subprocess
 import numpy as np
+import sys
 
 # Speech Recognition (Google STT - avoids torch DLL issues)
 import speech_recognition as sr
@@ -42,6 +43,13 @@ except ImportError:
 
 # ---------- CONFIG ----------
 app = Flask(__name__)
+
+# Ensure console can print unicode (emojis) without crashing on Windows
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['STATIC_FOLDER'] = 'static'

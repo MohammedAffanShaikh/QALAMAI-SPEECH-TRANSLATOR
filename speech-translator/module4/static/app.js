@@ -1,4 +1,7 @@
 // Module 4 — Real-Time Speech Translator JavaScript
+// Backend base URL detection for static hosting (e.g., Netlify). Leave empty for same-origin (Flask).
+const API_BASE = (typeof window !== 'undefined' && window.BACKEND_BASE_URL) ? window.BACKEND_BASE_URL.replace(/\/$/, '') : '';
+const api = (path) => `${API_BASE}${path}`;
 
 let mediaRecorder;
 let audioChunks = [];
@@ -34,7 +37,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     formData.append('gender', gender);
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch(api('/upload'), {
             method: 'POST',
             body: formData
         });
@@ -186,7 +189,7 @@ async function processAudioBlob(audioBlob) {
         formData.append('lang', liveLang.value);
         formData.append('gender', gender);
 
-        const response = await fetch('/upload', {
+        const response = await fetch(api('/upload'), {
             method: 'POST',
             body: formData
         });
@@ -215,7 +218,7 @@ async function processAudioBlob(audioBlob) {
 // ---------- Alternative: Text-only translation (for external speech recognition) ----------
 async function translateTextOnly(text, lang) {
     try {
-        const response = await fetch('/translate_text', {
+        const response = await fetch(api('/translate_text'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -290,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsBox.innerHTML = '<div class="status loading show">📥 Downloading and processing audio...</div>';
 
         try {
-            const res = await fetch('/youtube_translate', {
+            const res = await fetch(api('/youtube_translate'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url, lang, gender })
